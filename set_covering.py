@@ -5,9 +5,9 @@ import numpy as np
 import math
 
 ##File path
-filepath=''
-oh=pd.read_csv(f"{filepath}OHCA.csv")
-aa=pd.read_csv(f"{filepath}candidate_site.csv")
+filepath = ''
+oh = pd.read_csv(f"{filepath}OHCA_2022_KwunTong.csv")
+aa = pd.read_csv(f"{filepath}new_candidate_site.csv")
 
 
 ##Distance calculation
@@ -36,7 +36,7 @@ def get_distance_data(x, y, num):
 ##Row: OHCA case
 ##Column: AED candidate site
 ##num = 100 meters
-distance_matrix=get_distance_data(oh,aa,100)
+distance_matrix=get_distance_data(oh,aa,150)
 ##Distance <= 100, mark it as 1; Otherwise, 0
 distance_matrix[distance_matrix>=0]=1
 distance_matrix[distance_matrix==-1]=0
@@ -57,10 +57,9 @@ obj=cvx.Minimize(cvx.sum(x))
 ##Create a problem
 prob=cvx.Problem(obj,constraints)
 ##GUROBI solver
-prob.solve(solver=cvx.GUROBI)
+prob.solve(solver=cvx.GUROBI, verbose = True)
 
 aa['x']=x.value
 aa=aa[aa['x']==1]
 ##Output the locations of the selected candidate site
-aa.to_csv(f'{filepath}candidate_site_result.csv')
-
+aa.to_csv(f"{filepath}setCovering_result.csv")
